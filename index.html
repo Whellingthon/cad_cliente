@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clube de Carros Antigos</title>
+    <!-- Tailwind CSS via CDN (Para ficar bonito sem esforço) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-stone-100 font-sans text-stone-800">
+
+    <!-- CABEÇALHO -->
+    <header class="bg-slate-900 text-amber-500 p-6 shadow-lg border-b-4 border-amber-600">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i data-lucide="car-front" class="w-8 h-8 text-amber-500"></i>
+                <div>
+                    <h1 class="text-2xl font-bold uppercase tracking-wider">CAAT</h1>
+                    <p class="text-xs text-slate-400">Clube de Automóveis Antigos de Taubaté</p>
+                </div>
+            </div>
+            <nav class="flex gap-4 text-sm font-semibold">
+                <button onclick="showView('form')" id="btnForm" class="px-4 py-2 rounded-full transition-colors bg-amber-600 text-white">
+                    Novo Cadastro
+                </button>
+                
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-6">
+        
+        <!-- MENSAGENS -->
+        <div id="messageBox" class="hidden mb-6 px-4 py-3 rounded relative flex items-center gap-2"></div>
+
+        <!-- VIEW: FORMULÁRIO -->
+        <div id="viewForm" class="block">
+            <div class="bg-white rounded-lg shadow-xl overflow-hidden border border-stone-200">
+                <div class="bg-stone-200 p-4 border-b border-stone-300">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="user" class="text-amber-600"></i> Ficha de Inscrição
+                    </h2>
+                </div>
+                
+                <form id="cadastroForm" class="p-6 md:p-8 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Coluna 1: Associado -->
+                        <div class="space-y-4">
+                            <h3 class="font-semibold text-slate-600 border-b pb-2">Dados do Associado</h3>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Nome Completo</label>
+                                <input type="text" id="name" required class="w-full rounded-md border-stone-300 bg-stone-50 py-2 border px-3 focus:border-amber-500 outline-none" placeholder="Ex: João da Silva">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                                <input type="email" id="email" required class="w-full rounded-md border-stone-300 bg-stone-50 py-2 border px-3 focus:border-amber-500 outline-none" placeholder="joao@email.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Foto do Associado</label>
+                                <div class="flex items-center gap-4 mt-1">
+                                    <div class="h-24 w-24 rounded-full overflow-hidden bg-stone-200 border-2 border-dashed border-stone-400 flex items-center justify-center">
+                                        <img id="previewAssociate" src="" class="hidden w-full h-full object-cover">
+                                        <i id="iconAssociate" data-lucide="user" class="text-stone-400"></i>
+                                    </div>
+                                    <label class="cursor-pointer bg-white py-2 px-3 border border-stone-300 rounded-md shadow-sm text-sm font-medium hover:bg-stone-50">
+                                        <span>Selecionar</span>
+                                        <input type="file" id="fileAssociate" class="hidden" accept="image/*" onchange="handleFileSelect(event, 'Associate')">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coluna 2: Carro -->
+                        <div class="space-y-4">
+                            <h3 class="font-semibold text-slate-600 border-b pb-2">A Jóia (Veículo)</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Modelo</label>
+                                    <input type="text" id="carModel" required class="w-full rounded-md border-stone-300 bg-stone-50 py-2 border px-3 focus:border-amber-500 outline-none" placeholder="Opala SS">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Ano</label>
+                                    <input type="text" id="carYear" required class="w-full rounded-md border-stone-300 bg-stone-50 py-2 border px-3 focus:border-amber-500 outline-none" placeholder="1974">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Foto do Carro</label>
+                                <div class="mt-1 w-full h-40 rounded-lg overflow-hidden bg-stone-200 border-2 border-dashed border-stone-400 flex items-center justify-center relative group">
+                                    <img id="previewCar" src="" class="hidden w-full h-full object-cover">
+                                    <div id="iconCar" class="text-center p-4">
+                                        <i data-lucide="image" class="mx-auto text-stone-400 mb-1"></i>
+                                        <p class="text-xs text-stone-500">Clique para adicionar</p>
+                                    </div>
+                                    <input type="file" id="fileCar" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" onchange="handleFileSelect(event, 'Car')">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="pt-4 border-t border-stone-200 flex justify-end">
+                        <button type="submit" id="btnSubmit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 rounded-lg shadow-md flex items-center gap-2 transition-all">
+                            <i data-lucide="save"></i> Confirmar Cadastro
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- VIEW: LISTA -->
+        <div id="viewList" class="hidden">
+            <div id="membersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Os cards serão inseridos aqui via Javascript -->
+                <p class="text-center col-span-full text-slate-500 py-10">Carregando associados...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SCRIPTS (LÓGICA) -->
+    <script type="module">
+        // Importando Firebase via CDN (Módulos modernos)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // --- CONFIGURAÇÃO (Suas Chaves) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1X1aSH-x1XK4rvBCAKL_N8PKfb4sZPUg",
+            authDomain: "cad-clientes-antigostaubate.firebaseapp.com",
+            projectId: "cad-clientes-antigostaubate",
+            storageBucket: "cad-clientes-antigostaubate.firebasestorage.app",
+            messagingSenderId: "320810959492",
+            appId: "1:320810959492:web:e2c8fa968d5e1587b1f8d1",
+            measurementId: "G-C7YWGR6DED"
+        };
+
+        // Inicializa Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        // Variáveis globais
+        let currentUser = null;
+        let selectedFiles = { associate: null, car: null };
+
+        // Autenticação Anônima
+        signInAnonymously(auth).catch((error) => {
+            console.error("Erro auth:", error);
+            showMessage("Erro na autenticação. Verifique o console.", "error");
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                console.log("Conectado como:", user.uid);
+                loadMembers(); // Carrega lista assim que logar
+            }
+        });
+
+        // --- FUNÇÕES DE INTERFACE ---
+
+        // Alternar entre Formulário e Lista
+        window.showView = (viewName) => {
+            document.getElementById('viewForm').classList.toggle('hidden', viewName !== 'form');
+            document.getElementById('viewList').classList.toggle('hidden', viewName !== 'list');
+            
+            // Atualiza botões do menu
+            const btnForm = document.getElementById('btnForm');
+            const btnList = document.getElementById('btnList');
+            
+            if(viewName === 'form') {
+                btnForm.className = "px-4 py-2 rounded-full transition-colors bg-amber-600 text-white";
+                btnList.className = "px-4 py-2 rounded-full transition-colors hover:text-white text-slate-400";
+            } else {
+                btnList.className = "px-4 py-2 rounded-full transition-colors bg-amber-600 text-white";
+                btnForm.className = "px-4 py-2 rounded-full transition-colors hover:text-white text-slate-400";
+            }
+        };
+
+        // Exibir mensagens (Sucesso/Erro)
+        function showMessage(msg, type) {
+            const box = document.getElementById('messageBox');
+            box.textContent = msg;
+            box.classList.remove('hidden', 'bg-green-100', 'text-green-700', 'border-green-400', 'bg-red-100', 'text-red-700', 'border-red-400');
+            
+            if (type === 'success') {
+                box.classList.add('bg-green-100', 'text-green-700', 'border-green-400', 'border');
+            } else {
+                box.classList.add('bg-red-100', 'text-red-700', 'border-red-400', 'border');
+            }
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 5000);
+        }
+
+        // Preview de Imagem
+        window.handleFileSelect = (event, type) => {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFiles[type.toLowerCase()] = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById(`preview${type}`).src = e.target.result;
+                    document.getElementById(`preview${type}`).classList.remove('hidden');
+                    if(document.getElementById(`icon${type}`)) {
+                        document.getElementById(`icon${type}`).classList.add('hidden');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        // --- LÓGICA DE DADOS ---
+
+        // Compresso de Imagem (Workaround para não usar Storage Pago)
+        const compressImage = (file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const maxWidth = 800; // Redimensiona para 800px
+                        const scaleSize = maxWidth / img.width;
+                        const width = maxWidth < img.width ? maxWidth : img.width;
+                        const height = maxWidth < img.width ? img.height * scaleSize : img.height;
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.7)); // Retorna Base64
+                    };
+                };
+                reader.onerror = error => reject(error);
+            });
+        };
+
+        // Salvar Cadastro
+        document.getElementById('cadastroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!selectedFiles.associate || !selectedFiles.car) {
+                showMessage("Por favor, selecione as duas fotos!", "error");
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmit');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = "Comprimindo e Salvando...";
+
+            try {
+                // Comprime imagens
+                const associateBase64 = await compressImage(selectedFiles.associate);
+                const carBase64 = await compressImage(selectedFiles.car);
+
+                // Dados
+                const newMember = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    carModel: document.getElementById('carModel').value,
+                    carYear: document.getElementById('carYear').value,
+                    associateUrl: associateBase64,
+                    carUrl: carBase64,
+                    createdAt: serverTimestamp(),
+                    createdBy: currentUser ? currentUser.uid : 'anon'
+                };
+
+                // Salva no Firestore
+                await addDoc(collection(db, 'artifacts', 'default-app-id', 'public', 'data', 'associados'), newMember);
+
+                showMessage("Cadastro realizado com sucesso!", "success");
+                
+                // Limpa form
+                document.getElementById('cadastroForm').reset();
+                document.getElementById('previewAssociate').classList.add('hidden');
+                document.getElementById('iconAssociate').classList.remove('hidden');
+                document.getElementById('previewCar').classList.add('hidden');
+                document.getElementById('iconCar').classList.remove('hidden');
+                selectedFiles = { associate: null, car: null };
+
+                setTimeout(() => showView('list'), 1500);
+
+            } catch (error) {
+                console.error(error);
+                let msg = "Erro ao salvar.";
+                if (error.code === 'permission-denied') msg = "Erro de Permissão: Verifique se o Firestore está em 'Modo Teste'.";
+                showMessage(msg, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        });
+
+        // Carregar Lista (Realtime)
+        function loadMembers() {
+            const q = query(collection(db, 'artifacts', 'default-app-id', 'public', 'data', 'associados')); // Removido orderBy para evitar erro de índice
+            
+            onSnapshot(q, (snapshot) => {
+                const grid = document.getElementById('membersGrid');
+                grid.innerHTML = ''; // Limpa lista
+
+                if (snapshot.empty) {
+                    grid.innerHTML = '<p class="text-center col-span-full text-slate-500 py-10">Nenhum associado encontrado.</p>';
+                    return;
+                }
+
+                // Pega dados e ordena manualmente por data (JS sort)
+                let members = [];
+                snapshot.forEach(doc => members.push({ id: doc.id, ...doc.data() }));
+                members.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+                members.forEach(member => {
+                    const card = document.createElement('div');
+                    card.className = "bg-white rounded-lg shadow-lg overflow-hidden border border-stone-200 hover:shadow-xl transition-shadow group";
+                    card.innerHTML = `
+                        <div class="h-48 bg-stone-200 relative overflow-hidden">
+                            <img src="${member.carUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute top-2 right-2 bg-black/70 text-amber-500 px-2 py-1 rounded text-xs font-bold border border-amber-500/50 shadow-sm">
+                                ${member.carYear}
+                            </div>
+                        </div>
+                        <div class="p-4 relative">
+                            <div class="absolute -top-10 left-4">
+                                <img src="${member.associateUrl}" class="w-20 h-20 rounded-full border-4 border-white shadow-md object-cover bg-stone-100">
+                            </div>
+                            <div class="mt-10">
+                                <h3 class="text-lg font-bold text-slate-800">${member.name}</h3>
+                                <p class="text-sm text-slate-500 flex items-center gap-1 mb-3 truncate">
+                                    ${member.email}
+                                </p>
+                                <div class="bg-stone-100 p-2 rounded border border-stone-200">
+                                    <p class="text-sm font-semibold text-amber-700 flex items-center gap-2">
+                                        <i data-lucide="car-front" class="w-4 h-4"></i>
+                                        ${member.carModel}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+                // Recarrega ícones nos novos elementos
+                lucide.createIcons();
+            }, (error) => {
+                console.error("Erro ao ler:", error);
+                if (error.code === 'permission-denied') {
+                    document.getElementById('membersGrid').innerHTML = '<p class="text-red-500 col-span-full text-center">Erro de Permissão: O Banco de Dados não está acessível (Verifique o Modo Teste).</p>';
+                }
+            });
+        }
+
+        // Inicializa ícones
+        lucide.createIcons();
+    </script>
+</body>
+</html>
